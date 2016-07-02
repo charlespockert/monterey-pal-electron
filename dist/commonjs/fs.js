@@ -122,6 +122,10 @@ var Fs = exports.Fs = function () {
     return split[split.length - 1];
   };
 
+  Fs.prototype.getFolderPath = function getFolderPath(p) {
+    return path.dirname(p);
+  };
+
   Fs.prototype.join = function join(firstSegment, secondSegment) {
     return path.join(firstSegment, secondSegment);
   };

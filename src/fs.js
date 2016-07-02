@@ -49,6 +49,10 @@ export class Fs {
     return split[split.length - 1];
   }
 
+  getFolderPath(p) {
+    return path.dirname(p);
+  }
+
   join(firstSegment, secondSegment) {
     return path.join(firstSegment, secondSegment);
   }

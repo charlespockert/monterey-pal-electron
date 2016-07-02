@@ -3,14 +3,16 @@ import {AureliaCLI}    from './aurelia-cli';
 import {Fs}            from './fs';
 import {Session}       from './session';
 import {Processes}     from './processes';
+import {NPM}           from './npm';
 
 export function initialize() {
   let _fs = new Fs();
   let _aureliaCLI = new AureliaCLI();
   let _session = new Session();
   let _processes = new Processes();
+  let _npm = new NPM();
 
-  initializePAL((fs, session, aureliaCLI, processes) => {
+  initializePAL((fs, session, aureliaCLI, processes, npm) => {
     Object.assign(fs, _fs);
     Object.assign(fs, _fs.constructor.prototype);
     Object.assign(aureliaCLI, _aureliaCLI);
@@ -19,5 +21,7 @@ export function initialize() {
     Object.assign(session, _session.constructor.prototype);
     Object.assign(processes, _processes)
     Object.assign(processes, _processes.constructor.prototype);
+    Object.assign(npm, _npm)
+    Object.assign(npm, _npm.constructor.prototype);
   });
 }
