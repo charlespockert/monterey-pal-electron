@@ -17,14 +17,17 @@ var _processes2 = require('./processes');
 
 var _npm2 = require('./npm');
 
+var _jspm2 = require('./jspm');
+
 function initialize() {
   var _fs = new _fs2.Fs();
   var _aureliaCLI = new _aureliaCli.AureliaCLI();
   var _session = new _session2.Session();
   var _processes = new _processes2.Processes();
   var _npm = new _npm2.NPM();
+  var _jspm = new _jspm2.JSPM();
 
-  (0, _montereyPal.initializePAL)(function (fs, session, aureliaCLI, processes, npm) {
+  (0, _montereyPal.initializePAL)(function (fs, session, aureliaCLI, processes, npm, jspm) {
     Object.assign(fs, _fs);
     Object.assign(fs, _fs.constructor.prototype);
     Object.assign(aureliaCLI, _aureliaCLI);
@@ -35,5 +38,7 @@ function initialize() {
     Object.assign(processes, _processes.constructor.prototype);
     Object.assign(npm, _npm);
     Object.assign(npm, _npm.constructor.prototype);
+    Object.assign(jspm, _jspm);
+    Object.assign(jspm, _jspm.constructor.prototype);
   });
 }
