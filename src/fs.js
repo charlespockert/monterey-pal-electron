@@ -53,8 +53,8 @@ export class Fs {
     return path.dirname(p);
   }
 
-  join(firstSegment, secondSegment) {
-    return path.join(firstSegment, secondSegment);
+  join(...segments) {
+    return path.join.apply(null, segments);
   }
 
   async getTempFile() {

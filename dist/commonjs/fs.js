@@ -126,8 +126,12 @@ var Fs = exports.Fs = function () {
     return path.dirname(p);
   };
 
-  Fs.prototype.join = function join(firstSegment, secondSegment) {
-    return path.join(firstSegment, secondSegment);
+  Fs.prototype.join = function join() {
+    for (var _len = arguments.length, segments = Array(_len), _key = 0; _key < _len; _key++) {
+      segments[_key] = arguments[_key];
+    }
+
+    return path.join.apply(null, segments);
   };
 
   Fs.prototype.getTempFile = function () {
