@@ -17,6 +17,7 @@ var yauzl = System._nodeRequire('yauzl');
 var mkdirp = System._nodeRequire('mkdirp');
 var mv = System._nodeRequire('mv');
 var nodeUrl = System._nodeRequire('url');
+var remote = System._nodeRequire('electron').remote;
 
 var Fs = exports.Fs = function () {
   function Fs() {
@@ -230,6 +231,10 @@ var Fs = exports.Fs = function () {
     return move;
   }();
 
+  Fs.prototype.getRootDir = function getRootDir() {
+    return remote.getGlobal('rootDir');
+  };
+
   Fs.prototype.unzip = function () {
     var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(zipPath, outPath) {
       var _this = this;
@@ -238,9 +243,9 @@ var Fs = exports.Fs = function () {
         while (1) {
           switch (_context7.prev = _context7.next) {
             case 0:
-              return _context7.abrupt('return', new Promise(function (resolve) {
+              return _context7.abrupt('return', new Promise(function (resolve, reject) {
                 yauzl.open(zipPath, { autoClose: true, lazyEntries: true }, function (err, zipfile) {
-                  if (err) throw err;
+                  if (err) reject(err);
                   zipfile.readEntry();
                   zipfile.on('close', function () {
                     return resolve();
@@ -251,15 +256,15 @@ var Fs = exports.Fs = function () {
                   zipfile.on('entry', function (entry) {
                     if (/\/$/.test(entry.fileName)) {
                       mkdirp(_this.join(outPath, entry.fileName), function (err1) {
-                        if (err1) throw err1;
+                        if (err1) reject(err1);
                         zipfile.readEntry();
                       });
                     } else {
                       zipfile.openReadStream(entry, function (err2, readStream) {
-                        if (err2) throw err2;
+                        if (err2) reject(err2);
 
                         mkdirp(path.dirname(_this.join(outPath, entry.fileName)), function (err3) {
-                          if (err3) throw err3;
+                          if (err3) reject(err3);
                           readStream.pipe(fs.createWriteStream(_this.join(outPath, entry.fileName)));
                           readStream.on('end', function () {
                             zipfile.readEntry();
