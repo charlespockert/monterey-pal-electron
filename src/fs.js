@@ -7,7 +7,7 @@ const yauzl    = System._nodeRequire('yauzl');
 const mkdirp   = System._nodeRequire('mkdirp');
 const mv       = System._nodeRequire('mv');
 const nodeUrl  = System._nodeRequire('url');
-const remote = System._nodeRequire('electron').remote;
+const remote   = System._nodeRequire('electron').remote;
 
 export class Fs {
   async readFile(filePath) {
