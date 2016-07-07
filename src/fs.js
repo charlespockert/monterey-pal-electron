@@ -35,6 +35,16 @@ export class Fs {
     });
   }
 
+  async writeFile(path, content) {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(path, content, (err) => {
+        if (err) reject(err);
+
+        resolve();
+      });
+    });
+  }
+
   async showOpenDialog(config) {
     return new Promise(resolve => {
       dialog.showOpenDialog(config, c => resolve(c));
