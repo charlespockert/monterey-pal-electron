@@ -264,6 +264,10 @@ var Fs = exports.Fs = function () {
     return remote.getGlobal('rootDir');
   };
 
+  Fs.prototype.normalize = function normalize(p) {
+    return path.normalize(p);
+  };
+
   Fs.prototype.unzip = function () {
     var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(zipPath, outPath) {
       var _this = this;

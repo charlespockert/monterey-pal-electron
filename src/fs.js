@@ -111,6 +111,10 @@ export class Fs {
     return remote.getGlobal('rootDir');
   }
 
+  normalize(p) {
+    return path.normalize(p);
+  }
+
   async unzip(zipPath, outPath) {
     return new Promise((resolve, reject) => {
       yauzl.open(zipPath, {autoClose: true, lazyEntries: true}, (err, zipfile) => {
