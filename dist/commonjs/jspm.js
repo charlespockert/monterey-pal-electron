@@ -3,6 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.JSPM = undefined;
+
+var _guid = require('./guid');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -21,7 +24,7 @@ var JSPM = exports.JSPM = function () {
     var jspmOptions = options.jspmOptions || {};
     var jspmModule = requireTaskPool(jspmTaskPath);
 
-    jspmOptions.guid = this.guid();
+    jspmOptions.guid = (0, _guid.createGUID)();
     ipcRenderer.on(jspmOptions.guid, function (event, msg) {
       _this._log(options, msg);
     });
@@ -35,13 +38,6 @@ var JSPM = exports.JSPM = function () {
       _this._log(options, 'error while installing jspm packages, ' + error.message);
       throw error;
     });
-  };
-
-  JSPM.prototype.guid = function guid() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
   };
 
   JSPM.prototype.downloadLoader = function downloadLoader(options) {
