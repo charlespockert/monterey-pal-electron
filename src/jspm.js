@@ -1,29 +1,31 @@
+const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
+
 export class JSPM {
-  isLoaded = false;
-
   install (packages, options) {
-    var system = System;
-    const jspm = System._nodeRequire('jspm');
-    System = system;
     let jspmOptions = options.jspmOptions || {};
+    let jspmModule = requireTaskPool(jspmTaskPath);
 
-    let originalWorkingDirectory = process.cwd();
-    process.chdir(jspmOptions.workingDirectory || process.cwd());
-    this._log(options, `chdir: ${jspmOptions.workingDirectory}`);
-
-    jspm.setPackagePath(jspmOptions.workingDirectory);
-    this._log(options, "installing...");
-    return new Promise((resolve, reject) => {
-      jspm.install(true, jspmOptions).then(() => {
-        this._log(options, "finished installing...");
-        process.chdir(originalWorkingDirectory);
-        resolve();
-      }).catch(error => {
-        reject(error);
-      });
+    this._log(options, 'installing...');
+    return jspmModule.install(jspmOptions).then(()=> {
+      this._log(options, 'finished installing jspm packages');
     }).catch(error => {
-      this._log(options, "error while installing...", error);
-        process.chdir(originalWorkingDirectory);
+      this._log(options, `error while installing jspm packages, ${error.message}`);
+      throw error;
+    });
+  }
+
+  downloadLoader(options) {
+    let jspmOptions = options.jspmOptions || {};
+    let jspmModule = requireTaskPool(jspmTaskPath);
+
+    this._log(options, 'downloading systemjs loader...');
+    return jspmModule.dlLoader(jspmOptions)
+    .then(() => {
+      this._log(options, `downloaded systemjs loader`);
+    }).catch(err => {
+      this._log(options, `error while downloading systemjs loader, ${error.message}`);
+      throw err;
     });
   }
 
