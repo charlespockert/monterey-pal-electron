@@ -18,7 +18,7 @@ var JSPM = exports.JSPM = function () {
     _classCallCheck(this, JSPM);
   }
 
-  JSPM.prototype.install = function install(packages, options) {
+  JSPM.prototype.install = function install(deps, options) {
     var _this = this;
 
     var jspmOptions = options.jspmOptions || {};
@@ -30,7 +30,7 @@ var JSPM = exports.JSPM = function () {
     });
 
     this._log(options, 'installing...');
-    return jspmModule.install(jspmOptions).then(function () {
+    return jspmModule.install(deps, jspmOptions).then(function () {
       ipcRenderer.removeAllListeners(jspmOptions.guid);
       _this._log(options, 'finished installing jspm packages');
     }).catch(function (error) {
@@ -50,7 +50,7 @@ var JSPM = exports.JSPM = function () {
     return jspmModule.dlLoader(jspmOptions).then(function () {
       _this2._log(options, 'downloaded systemjs loader');
     }).catch(function (err) {
-      _this2._log(options, 'error while downloading systemjs loader, ' + error.message);
+      _this2._log(options, 'error while downloading systemjs loader, ' + err.message);
       throw err;
     });
   };

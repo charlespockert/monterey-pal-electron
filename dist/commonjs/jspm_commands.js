@@ -8,7 +8,7 @@ var jspm = require('jspm');
 var jspmConfig = require('jspm/lib/config.js');
 var mainWindow = require('electron').remote.getGlobal('mainWindow');
 
-exports.install = function (jspmOptions) {
+exports.install = function (deps, jspmOptions) {
   var jspm = require('jspm');
   jspm.setPackagePath(jspmOptions.workingDirectory);
 
@@ -20,13 +20,13 @@ exports.install = function (jspmOptions) {
     }
   });
 
-  return jspm.install(true, jspmOptions);
+  return jspm.install(deps, jspmOptions);
 };
 
 exports.dlLoader = function (jspmOptions) {
   var jspm = require('jspm');
   jspm.setPackagePath(jspmOptions.workingDirectory);
-  return jspm.dlLoader(null, true);
+  return jspm.checkDlLoader();
 };
 
 exports.getConfig = function (projectPath, packageJSONPath) {

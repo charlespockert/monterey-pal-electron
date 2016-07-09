@@ -4,7 +4,7 @@ const ipcRenderer = System._nodeRequire('electron').ipcRenderer;
 import {createGUID} from './guid';
 
 export class JSPM {
-  install (packages, options) {
+  install (deps, options) {
     let jspmOptions = options.jspmOptions || {};
     let jspmModule = requireTaskPool(jspmTaskPath);
 
@@ -15,7 +15,7 @@ export class JSPM {
     });
 
     this._log(options, 'installing...');
-    return jspmModule.install(jspmOptions).then(()=> {
+    return jspmModule.install(deps, jspmOptions).then(()=> {
       ipcRenderer.removeAllListeners(jspmOptions.guid);
       this._log(options, 'finished installing jspm packages');
     }).catch(error => {
@@ -34,7 +34,7 @@ export class JSPM {
     .then(() => {
       this._log(options, `downloaded systemjs loader`);
     }).catch(err => {
-      this._log(options, `error while downloading systemjs loader, ${error.message}`);
+      this._log(options, `error while downloading systemjs loader, ${err.message}`);
       throw err;
     });
   }
