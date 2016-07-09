@@ -39,6 +39,12 @@ export class JSPM {
     });
   }
 
+  getConfig(projectPath, packageJSONPath) {
+    let jspmModule = requireTaskPool(jspmTaskPath);
+
+    return jspmModule.getConfig(projectPath, packageJSONPath);
+  }
+
   _log(options, msg) {
     if (options.logCallback) {
       options.logCallback({level: 'custom', message: msg });

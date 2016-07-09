@@ -1,4 +1,6 @@
 const {ipcRenderer} = require('electron');
+const jspm = require('jspm');
+const jspmConfig = require('jspm/lib/config.js');
 const mainWindow = require('electron').remote.getGlobal('mainWindow');
 
 exports.install = function(jspmOptions) {
@@ -21,4 +23,20 @@ exports.dlLoader = function (jspmOptions) {
   let jspm = require('jspm');
   jspm.setPackagePath(jspmOptions.workingDirectory);
   return jspm.dlLoader(null, true);
+}
+
+exports.getConfig = function (projectPath, packageJSONPath) {
+  let originalWorkingDirectory = process.cwd();
+  process.chdir(projectPath);
+  jspm.setPackagePath(packageJSONPath);
+
+  return jspmConfig.load()
+  .then(() => {
+    process.chdir(originalWorkingDirectory);
+    return jspmConfig;
+  }).catch((e) => {
+    process.chdir(originalWorkingDirectory);
+
+    throw e;
+  });
 }
