@@ -8,6 +8,7 @@ var jspm = require('jspm');
 var jspmConfig = require('jspm/lib/config.js');
 var jspmCore = require('jspm/lib/core.js');
 var mainWindow = require('electron').remote.getGlobal('mainWindow');
+var semver = require('jspm/lib//semver');
 
 exports.install = function (deps, jspmOptions) {
   var jspm = require('jspm');
@@ -41,6 +42,59 @@ exports.getConfig = function (projectPath, packageJSONPath) {
   }).catch(function (e) {
     process.chdir(originalWorkingDirectory);
 
+    throw e;
+  });
+};
+
+exports.checkForks = function (jspmOptions) {
+  var jspm = require('jspm');
+  jspm.setPackagePath(jspmOptions.workingDirectory);
+
+  return jspmConfig.load().then(function () {
+    return new Promise(function (resolve, reject) {
+
+      var installed = jspmConfig.loader;
+      var versions = {};
+      var result = [];
+      var linkedVersions = {};
+
+      function addDep(dep) {
+        var vList = versions[dep.name] = versions[dep.name] || [];
+        var version = dep.version;
+        if (vList.indexOf(version) === -1) vList.push(version);
+      }
+
+      Object.keys(installed.baseMap).forEach(function (dep) {
+        addDep(installed.baseMap[dep]);
+      });
+
+      Object.keys(installed.depMap).forEach(function (parent) {
+        var curMap = installed.depMap[parent];
+        Object.keys(curMap).forEach(function (dep) {
+          addDep(curMap[dep]);
+        });
+      });
+
+      Object.keys(versions).forEach(function (dep) {
+        var vList = versions[dep].sort(semver.compare).map(function (version) {
+          if (linkedVersions[dep + '@' + version]) {
+            return '%' + version + '%';
+          } else {
+            return '`' + version + '`';
+          }
+        });
+
+        if (vList.length > 1) {
+          result.push({
+            dep: dep,
+            versions: vList
+          });
+        }
+      });
+
+      resolve(result);
+    });
+  }).catch(function (e) {
     throw e;
   });
 };

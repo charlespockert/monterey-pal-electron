@@ -3,8 +3,10 @@ const jspm = require('jspm');
 const jspmConfig = require('jspm/lib/config.js');
 const jspmCore = require('jspm/lib/core.js');
 const mainWindow = require('electron').remote.getGlobal('mainWindow');
+const semver = require('jspm/lib//semver');
 
-exports.install = function(deps, jspmOptions) {
+
+exports.install = function (deps, jspmOptions) {
   let jspm = require('jspm');
   jspm.setPackagePath(jspmOptions.workingDirectory);
 
@@ -17,14 +19,16 @@ exports.install = function(deps, jspmOptions) {
     }
   });
 
-  return jspm.install(deps, jspmOptions);
+  return jspm.install(deps, jspmOptions)
 };
+
 
 exports.dlLoader = function (jspmOptions) {
   let jspm = require('jspm');
   jspm.setPackagePath(jspmOptions.workingDirectory);
   return jspmCore.checkDlLoader();
-}
+};
+
 
 exports.getConfig = function (projectPath, packageJSONPath) {
   let originalWorkingDirectory = process.cwd();
@@ -32,12 +36,73 @@ exports.getConfig = function (projectPath, packageJSONPath) {
   jspm.setPackagePath(packageJSONPath);
 
   return jspmConfig.load()
-  .then(() => {
-    process.chdir(originalWorkingDirectory);
-    return jspmConfig;
-  }).catch((e) => {
-    process.chdir(originalWorkingDirectory);
+    .then(() => {
+      process.chdir(originalWorkingDirectory);
+      return jspmConfig;
+    }).catch((e) => {
+      process.chdir(originalWorkingDirectory);
 
-    throw e;
-  });
+      throw e;
+    });
+};
+
+
+exports.checkForks = function (jspmOptions) {
+  let jspm = require('jspm');
+  jspm.setPackagePath(jspmOptions.workingDirectory);
+
+  return jspmConfig.load()
+    .then(() => {
+      return new Promise((resolve, reject) => {
+
+        //source for the madness : https://github.com/jspm/jspm-cli/blob/master/lib/install.js#L779-L854
+
+        let installed = jspmConfig.loader;
+        var versions = {};
+        var result = [];
+        var linkedVersions = {};
+
+        function addDep(dep) {
+          var vList = versions[dep.name] = versions[dep.name] || [];
+          var version = dep.version;
+          if (vList.indexOf(version) === -1)
+            vList.push(version);
+        }
+
+        Object.keys(installed.baseMap).forEach(function (dep) {
+          addDep(installed.baseMap[dep]);
+        });
+
+        Object.keys(installed.depMap).forEach(function (parent) {
+          var curMap = installed.depMap[parent];
+          Object.keys(curMap).forEach(function (dep) {
+            addDep(curMap[dep]);
+          });
+        });
+
+        Object.keys(versions).forEach(function (dep) {
+          var vList = versions[dep].sort(semver.compare).map(function (version) {
+            if (linkedVersions[dep + '@' + version]) {
+              return '%' + version + '%';
+            }
+            else {
+              return '`' + version + '`';
+            }
+          });
+
+          if (vList.length > 1) {
+            result.push({
+              dep: dep,
+              versions: vList
+            })
+          }
+        });
+
+        resolve(result)
+      });
+    }).catch((e) => {
+      throw e;
+    });
 }
+
+

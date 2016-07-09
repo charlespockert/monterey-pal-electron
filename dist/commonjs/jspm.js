@@ -55,6 +55,12 @@ var JSPM = exports.JSPM = function () {
     });
   };
 
+  JSPM.prototype.checkForks = function checkForks(options) {
+    var jspmOptions = options.jspmOptions || {};
+    var jspmModule = requireTaskPool(jspmTaskPath);
+    return jspmModule.checkForks(jspmOptions);
+  };
+
   JSPM.prototype.getConfig = function getConfig(projectPath, packageJSONPath) {
     var jspmModule = requireTaskPool(jspmTaskPath);
 
