@@ -61,13 +61,8 @@ var NPM = exports.NPM = function () {
   NPM.prototype.ls = function ls(options) {
     return new Promise(function (resolve, reject) {
       try {
-        child_process.exec('npm ls --json', { cwd: options.workingDirectory, maxBuffer: 1024 * 500 }, function (error, stdout, stderr) {
-          if (error) {
-            reject(error);
-            return;
-          }
-
-          resolve(JSON.parse(stdout));
+        child_process.exec('npm ls --depth=0', { cwd: options.workingDirectory }, function (error, stdout, stderr) {
+          resolve(stdout);
         });
       } catch (e) {
         console.log('Error running "npm ls"', e);
