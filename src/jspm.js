@@ -39,10 +39,10 @@ export class JSPM {
     });
   }
 
-  checkForks(options) {
+  getForks(config, options) {
     let jspmOptions = options.jspmOptions || {};
     let jspmModule = requireTaskPool(jspmTaskPath);
-    return jspmModule.checkForks(jspmOptions)
+    return jspmModule.getForks(config, jspmOptions)
   }
 
   getConfig(projectPath, packageJSONPath) {

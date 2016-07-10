@@ -55,10 +55,10 @@ var JSPM = exports.JSPM = function () {
     });
   };
 
-  JSPM.prototype.checkForks = function checkForks(options) {
+  JSPM.prototype.getForks = function getForks(config, options) {
     var jspmOptions = options.jspmOptions || {};
     var jspmModule = requireTaskPool(jspmTaskPath);
-    return jspmModule.checkForks(jspmOptions);
+    return jspmModule.getForks(config, jspmOptions);
   };
 
   JSPM.prototype.getConfig = function getConfig(projectPath, packageJSONPath) {
